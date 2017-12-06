@@ -1,0 +1,69 @@
+
+//package daydayup.openstock.formula.parser;
+
+PARSER_BEGIN(Parser)
+package daydayup.openstock.formula.parser;
+public class Parser {
+    public static void main(String[] args) throws Exception {
+        EXP result = new Parser(new java.io.StringReader(args[0])).S();
+        System.out.println(result);
+    }
+}
+
+// Classes defining the Abstract Syntax Tree
+abstract class EXP {}
+class Num extends EXP {
+    int value;
+    Num(int v) {value = v;}
+    public String toString() {return value + "";}
+}
+class BinaryExp extends EXP {
+    String op;
+    Exp left, right;
+    BinaryExp(String o, EXP l, EXP r) {op = o; left = l; right = r;}
+    public String toString() {return "(" + op + " " + left + " " + right + ")";}
+}
+
+PARSER_END(Parser)
+
+//Whitespace and comments
+SKIP:  { 
+	" " | "\t" | "\n" | "\r"                    
+}
+
+//Symbol
+TOKEN: { 
+	"(" | ")" | "+" | "-" | "*" | "/" | <NUM: (["0"-"9"])+>
+}
+
+EXP parse(): {
+	EXP e;
+}{
+  e = expression() 		{ System.out.println(e)}
+  <EOF> 		{ return e; }
+}
+
+EXP expression(): {
+	EXP e1;
+	EXP e2;
+}{
+  e1 = T() 
+  (
+  	"+" 
+  	e2 = T()	{e1 = new BinaryExp("+", e1, e2);}
+  				
+  )* 
+  {return e1;}
+}
+
+EXP T(): {EXP e1; EXP e2;}
+{
+  e1=F() ("*" e2=F() {e1 = new BinaryExp("*", e1, e2);} )* {return e1;}
+}
+
+EXP F(): {EXP e; Token n;}
+{
+  n=<NUM> {return new Num(Integer.parseInt(n.image));}
+|
+  "(" e=E() ")" {return e;}
+}

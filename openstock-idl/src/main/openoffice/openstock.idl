@@ -1,0 +1,21 @@
+#ifndef __daydayup_openstock_OpenStock_idl__ 
+#define __daydayup_openstock_OpenStock_idl__ 
+ 
+#include <com/sun/star/beans/XPropertySet.idl>
+
+module daydayup { module openstock {
+
+  published interface XFunctions
+  {       
+      long osFirst([in] com::sun::star::beans::XPropertySet xOptions);
+
+      long osSecond([in] com::sun::star::beans::XPropertySet xOptions, [in] long intDummy);   
+      
+      string osCommand([in] com::sun::star::beans::XPropertySet xOptions, [in] string command);
+  }; 
+ 
+  service FunctionService: XFunctions;
+ 
+}; }; 
+ 
+#endif
